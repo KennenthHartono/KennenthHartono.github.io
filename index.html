@@ -160,7 +160,12 @@
     .cert-list, .edu-list { display: flex; flex-direction: column; gap: 0.8rem; }
     .cert-item, .edu-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.2rem; display: flex; justify-content: space-between; align-items: center; transition: border-color .2s; }
     .cert-item:hover, .edu-item:hover { border-color: var(--accent2); }
-    .cert-name { font-family: var(--mono); font-size: 0.82rem; }
+    .cert-item { cursor: pointer; }
+    .cert-item:hover { border-color: var(--accent) !important; }
+    .cert-item .cert-view { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--accent); opacity: 0; transition: opacity .2s; white-space: nowrap; }
+    .cert-item:hover .cert-view { opacity: 1; }
+    .cert-name { font-family: var(--mono); font-size: 0.82rem; flex: 1; }
+    .cert-view { flex-shrink: 0; margin-left: 1rem; margin-right: 1.5rem; }
     .edu-name { font-weight: 700; font-size: 0.9rem; }
     .cert-year, .edu-year { font-family: var(--mono); font-size: 0.75rem; color: var(--accent2); }
 
@@ -389,6 +394,64 @@
 
     /* ===== TERM CURSOR ===== */
     .term-cursor { display: inline-block; width: 7px; height: 1em; background: var(--accent); vertical-align: text-bottom; animation: blink 1s infinite; margin-left: 2px; }
+
+    /* ===== ACHIEVEMENT MODAL ===== */
+    .ach-card { cursor: pointer; }
+    .ach-card::after { content: '[ view details ]'; display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--accent); opacity: 0; margin-top: 0.6rem; transition: opacity .2s; letter-spacing: 0.1em; }
+    .ach-card:hover::after { opacity: 1; }
+
+    #ach-modal {
+      display: none; position: fixed; inset: 0; z-index: 99980;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
+      align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    #ach-modal.show { display: flex; }
+    .ach-modal-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; max-width: 640px; width: 100%;
+      max-height: 88vh; overflow-y: auto;
+      animation: modalIn 0.35s cubic-bezier(.4,0,.2,1);
+      position: relative;
+    }
+    @keyframes modalIn { from { opacity:0; transform: scale(0.92) translateY(20px); } to { opacity:1; transform: none; } }
+    .ach-modal-header {
+      padding: 1.8rem 2rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; background: var(--surface); z-index: 2;
+      border-radius: 16px 16px 0 0;
+    }
+    .ach-modal-medal { font-size: 2rem; margin-bottom: 0.5rem; }
+    .ach-modal-title { font-size: 1rem; font-weight: 800; line-height: 1.4; margin-bottom: 0.4rem; }
+    .ach-modal-year { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--accent); }
+    .ach-modal-close {
+      position: absolute; top: 1.2rem; right: 1.2rem;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--muted); width: 32px; height: 32px; border-radius: 8px;
+      font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all .2s; font-family: 'JetBrains Mono', monospace;
+    }
+    .ach-modal-close:hover { border-color: var(--accent); color: var(--accent); }
+    .ach-modal-body { padding: 1.5rem 2rem 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+    .ach-modal-section-label { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .ach-modal-desc { color: var(--muted); font-size: 0.88rem; line-height: 1.8; }
+    .ach-modal-project { background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 0.9rem 1.2rem; }
+    .ach-modal-project-name { font-weight: 700; font-size: 0.92rem; margin-bottom: 0.2rem; }
+    .ach-modal-project-sub { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--muted); }
+    .ach-modal-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .ach-modal-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 3px 10px; border-radius: 20px; background: rgba(0,245,160,0.08); color: var(--accent); border: 1px solid rgba(0,245,160,0.2); }
+    .ach-modal-cert {
+      border-radius: 10px; overflow: hidden; border: 1px solid var(--border);
+      background: var(--surface2); min-height: 180px;
+      display: flex; align-items: center; justify-content: center; position: relative;
+    }
+    .ach-modal-cert img { width: 100%; height: auto; display: block; border-radius: 10px; }
+    .ach-modal-cert-placeholder { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--muted); text-align: center; padding: 2rem; line-height: 2; }
+    .ach-modal-cert-placeholder span { color: var(--accent); display: block; font-size: 2rem; margin-bottom: 0.5rem; }
+    @media (max-width: 640px) {
+      .ach-modal-box { border-radius: 12px; }
+      .ach-modal-header { padding: 1.4rem 1.2rem 1rem; }
+      .ach-modal-body { padding: 1.2rem 1.2rem 1.5rem; }
+    }
   </style>
 </head>
 <body>
@@ -421,8 +484,8 @@
 
 <!-- FLOATING SOCIAL -->
 <div class="floating-social">
-  <a class="social-btn" href="/cdn-cgi/l/email-protection#e388868d8d868d978b8b8291978c8d8ca3848e828a8fcd808c8e" data-tip="Gmail">📧</a>
-  <a class="social-btn" href="/cdn-cgi/l/email-protection#7239171c1c171c061a3202001d061d1c1f131b1e5c111d1f" data-tip="ProtonMail">🔒</a>
+  <a class="social-btn" href="mailto:kennenthhartono@gmail.com" data-tip="Gmail">📧</a>
+  <a class="social-btn" href="mailto:Kennenth@protonmail.com" data-tip="ProtonMail">🔒</a>
   <a class="social-btn" href="https://linkedin.com/in/kennenthhartono" target="_blank" data-tip="LinkedIn">💼</a>
   <a class="social-btn" href="https://github.com/KennenthHartono" target="_blank" data-tip="GitHub">🐱</a>
 </div>
@@ -448,7 +511,7 @@
     <p class="hero-desc">// Robotics. Blockchain. Cyber Security. Web3 Bug Hunting.<br>// Securing decentralized systems &amp; building at the intersection of hardware and Web3.</p>
     <div class="btn-group">
       <a class="btn btn-primary" href="#experience">See My Experience</a>
-      <a class="btn btn-secondary" href="/cdn-cgi/l/email-protection#ff949a91919a918b97979e8d8b909190bf98929e9693d19c9092">Contact Me</a>
+      <a class="btn btn-secondary" href="mailto:kennenthhartono@gmail.com">Contact Me</a>
     </div>
     <div class="stats-row">
       <div class="stat-item"><div class="stat-num" data-target="9">0</div><div class="stat-label">org. roles</div></div>
@@ -465,7 +528,7 @@
       <!-- ============================================================
         CARA PASANG FOTO PROFIL:
         1. Simpan foto kamu di folder yang sama dengan file HTML ini
-        2. Ganti "foto-kamu.jpg" di bawah dengan nama file foto kamu
+        2. Replace "foto-kamu.jpg" di bawah dengan nama file foto kamu
            Contoh: src="kenneth.jpg" atau src="foto/profile.png"
         ============================================================ -->
       <div class="photo-circle">
@@ -475,7 +538,7 @@
         <div class="photo-placeholder" id="photoPlaceholder">
           <div class="photo-placeholder-icon">👤</div>
           <div class="photo-placeholder-text">Foto profil kamu<br>akan tampil di sini</div>
-          <div class="photo-placeholder-hint">Ganti src="foto.jpg"<br>dengan nama file foto kamu</div>
+          <div class="photo-placeholder-hint">Replace src="foto.jpg"<br>dengan nama file foto kamu</div>
         </div>
       </div>
       <div class="photo-badge"><div class="photo-badge-dot"></div> Surabaya, Indonesia</div>
@@ -638,19 +701,19 @@
   <div class="section-label">04 — achievements</div>
   <h2>Achievements</h2>
   <div class="achievements-grid">
-    <div class="ach-card"><div class="ach-medal">🥇</div><div class="ach-title">1st Place – Smart Living Competition, Mechatronics Day 2021, Swiss German University</div><div class="ach-year">2021 · National Level</div></div>
-    <div class="ach-card"><div class="ach-medal">🥉</div><div class="ach-title">3rd Place – Scientific Writing Competition, 12th National Geography Festival, UNY</div><div class="ach-year">2022 · National Level</div></div>
-    <div class="ach-card"><div class="ach-medal">🤖</div><div class="ach-title">4th Place – RoboMission Senior, World Robot Olympiad Indonesia 2023</div><div class="ach-year">2023 · National Level</div></div>
-    <div class="ach-card"><div class="ach-medal">🏅</div><div class="ach-title">Coach – WRO Indonesia 2024, Elementary Level: Led team to 2nd Place</div><div class="ach-year">2024 · National Level · As Coach</div></div>
-    <div class="ach-card"><div class="ach-medal">🏆</div><div class="ach-title">Coach – WRO Indonesia 2025: Teams achieved 3rd Place (3 Senior categories) &amp; 4th Place (4 Elementary categories)</div><div class="ach-year">2025 · National Level · As Coach</div></div>
-    <div class="ach-card"><div class="ach-medal">📝</div><div class="ach-title">Top 50 Finalist – National Essay Competition (NEC), IYREF 2025, ITB</div><div class="ach-year">2025 · National Level</div></div>
+    <div class="ach-card" onclick="openAchModal(0)"><div class="ach-medal">🥇</div><div class="ach-title">1st Place – Smart Living Competition, Mechatronics Day 2021, Swiss German University</div><div class="ach-year">2021 · National Level</div></div>
+    <div class="ach-card" onclick="openAchModal(1)"><div class="ach-medal">🥉</div><div class="ach-title">3rd Place – Scientific Writing Competition, 12th National Geography Festival, UNY</div><div class="ach-year">2022 · National Level</div></div>
+    <div class="ach-card" onclick="openAchModal(2)"><div class="ach-medal">🤖</div><div class="ach-title">4th Place – RoboMission Senior, World Robot Olympiad Indonesia 2023</div><div class="ach-year">2023 · National Level</div></div>
+    <div class="ach-card" onclick="openAchModal(3)"><div class="ach-medal">🏅</div><div class="ach-title">Coach – WRO Indonesia 2024, Elementary Level: Led team to 2nd Place</div><div class="ach-year">2024 · National Level · As Coach</div></div>
+    <div class="ach-card" onclick="openAchModal(4)"><div class="ach-medal">🏆</div><div class="ach-title">Coach – WRO Indonesia 2025: Teams achieved 3rd Place (3 Senior categories) &amp; 4th Place (4 Elementary categories)</div><div class="ach-year">2025 · National Level · As Coach</div></div>
+    <div class="ach-card" onclick="openAchModal(5)"><div class="ach-medal">📝</div><div class="ach-title">Top 50 Finalist – National Essay Competition (NEC), IYREF 2025, ITB</div><div class="ach-year">2025 · National Level</div></div>
   </div>
 
   <h2 style="margin-top:3rem">Certifications</h2>
   <div class="cert-list">
-    <div class="cert-item"><div class="cert-name">⛓ Blockchain Basics Course – Cyfrin Updraft</div><div class="cert-year">2026</div></div>
-    <div class="cert-item"><div class="cert-name">🔗 Chainlink Fundamentals – Cyfrin Updraft x Chainlink</div><div class="cert-year">2026</div></div>
-    <div class="cert-item"><div class="cert-name">🔒 Cyber Security Course Level Advanced – ITBOX</div><div class="cert-year">2025</div></div>
+    <div class="cert-item" onclick="openCertModal(0)"><div class="cert-name">⛓ Blockchain Basics Course – Cyfrin Updraft</div><span class="cert-view">→ view</span><div class="cert-year">2026</div></div>
+    <div class="cert-item" onclick="openCertModal(1)"><div class="cert-name">🔗 Chainlink Fundamentals – Cyfrin Updraft x Chainlink</div><span class="cert-view">→ view</span><div class="cert-year">2026</div></div>
+    <div class="cert-item" onclick="openCertModal(2)"><div class="cert-name">🔒 Cyber Security Course Level Advanced – ITBOX</div><span class="cert-view">→ view</span><div class="cert-year">2025</div></div>
   </div>
 
   <h2 style="margin-top:3rem">Education</h2>
@@ -1004,5 +1067,198 @@
     btn.textContent = 'Kirim Pesan →'; btn.disabled = false;
   }
 </script>
+
+<!-- ACHIEVEMENT MODAL -->
+<div id="ach-modal" onclick="if(event.target===this)closeAchModal()">
+  <div class="ach-modal-box">
+    <div class="ach-modal-header">
+      <div class="ach-modal-medal" id="modal-medal"></div>
+      <div class="ach-modal-title" id="modal-title"></div>
+      <div class="ach-modal-year" id="modal-year"></div>
+      <button class="ach-modal-close" onclick="closeAchModal()">✕</button>
+    </div>
+    <div class="ach-modal-body">
+      <div>
+        <div class="ach-modal-section-label">// project</div>
+        <div class="ach-modal-project">
+          <div class="ach-modal-project-name" id="modal-project-name"></div>
+          <div class="ach-modal-project-sub" id="modal-project-sub"></div>
+        </div>
+      </div>
+      <div>
+        <div class="ach-modal-section-label">// description</div>
+        <div class="ach-modal-desc" id="modal-desc"></div>
+      </div>
+      <div>
+        <div class="ach-modal-section-label">// tech stack</div>
+        <div class="ach-modal-tags" id="modal-tags"></div>
+      </div>
+      <div id="modal-cert-section">
+        <div class="ach-modal-section-label">// certificate</div>
+        <div class="ach-modal-cert" id="modal-cert"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const achData = [
+    {
+      medal: '🥇',
+      title: '1st Place – Smart Living Competition, Mechatronics Day 2021',
+      year: '2021 · National Level · Swiss German University',
+      project: 'Smart Living IoT System',
+      projectSub: 'Mechatronics Day 2021 · Swiss German University',
+      desc: 'Developed an IoT-based room occupancy monitoring system during the COVID-19 pandemic. The system automatically counts and tracks the number of people inside a space such as a store, displays real-time capacity status remotely via smartphone or laptop, and automatically locks the door when maximum capacity is reached — allowing visitors to check crowd conditions before entering.',
+      tags: ['Arduino', 'IoT', 'Sensor', 'C++'],
+      cert: 'images/cert-smartliving.jpg'
+    },
+    {
+      medal: '🥉',
+      title: '3rd Place – Scientific Writing Competition, 12th National Geography Festival, UNY',
+      year: '2022 · National Level · Universitas Negeri Yogyakarta',
+      project: 'Judul Paper / Karya Tulismu',
+      projectSub: 'National Geography Festival 2022 · UNY',
+      desc: 'Authored a research paper titled "Implementation of IoT Using Wemos D1 as an Effort to Realize Smart Tourism Through Physical Carrying Capacity." The system integrates visitor counting, temperature monitoring, and automated hand sanitizer using Wemos D1 as the main microcontroller, all connected to a smartphone app in real-time. Built using Arduino IDE with C++, the research applied R&D methodology and calculated Physical Carrying Capacity (PCC) across three tourism zones.',
+      tags: ['Scientific Writing', 'Research', 'Geography'],
+      cert: 'images/cert-uny.jpg'
+    },
+    {
+      medal: '🤖',
+      title: '4th Place – RoboMission Senior, World Robot Olympiad Indonesia 2023',
+      year: '2023 · National Level',
+      project: 'Nama Robot / Tim kamu',
+      projectSub: 'WRO Indonesia 2023 · RoboMission Senior Category',
+      desc: 'Competed in the World Robot Olympiad Indonesia 2023 under the RoboMission Senior category, achieving 4th place at the national level. Built and programmed a fully autonomous LEGO Mindstorms EV3 robot, handling the entire process from mechanical design to mission strategy and programming. The competition tested problem-solving, precision engineering, and adaptability under time pressure.',
+      tags: ['Robotics', 'LEGO Mindstorms', 'Python', 'Mechanical Design'],
+      cert: 'images/cert-wro2023.jpg'
+    },
+    {
+      medal: '🏅',
+      title: 'Coach – WRO Indonesia 2024, Elementary Level',
+      year: '2024 · National Level · As Coach',
+      project: 'Coaching & Mentoring Program',
+      projectSub: 'WRO Indonesia 2024 · Led team to 2nd Place',
+      desc: 'Successfully mentored a team to 2nd place in the World Robot Olympiad Indonesia 2024, a national-level robotics competition organized by LEGO Education and Institut Teknologi Sepuluh Nopember (ITS). Provided comprehensive guidance in robot design, programming logic, and strategic problem-solving — helping students build technical skills and competitive confidence throughout the preparation process.',
+      tags: ['Teaching', 'Robotics', 'Mentoring', 'LEGO'],
+      cert: null, showCert: false
+    },
+    {
+      medal: '🏆',
+      title: 'Coach – WRO Indonesia 2025',
+      year: '2025 · National Level · As Coach',
+      project: 'Multi-Team Coaching Program',
+      projectSub: '3rd Place (3 Senior) & 4th Place (4 Elementary categories)',
+      desc: 'Coached multiple teams across Elementary and Senior RoboMission categories at WRO Indonesia 2025, organized by LEGO Education and ITS. Guided the Senior team to 3rd place and the Elementary team to 4th place at the national level. Delivered structured training covering robot design, programming, and mission strategy, while fostering teamwork, resilience, and critical thinking in every student throughout the competition journey.',
+      tags: ['Teaching', 'Robotics', 'Leadership', 'Curriculum Design'],
+      cert: null, showCert: false
+    },
+    {
+      medal: '📝',
+      title: 'Top 50 Finalist – National Essay Competition (NEC), IYREF 2025, ITB',
+      year: '2025 · National Level · Institut Teknologi Bandung',
+      project: 'Judul Essay kamu',
+      projectSub: 'IYREF 2025 · ITB · Top 50 from thousands of participants',
+      desc: 'Selected as a Top 50 Finalist in the National Essay Competition (NEC) IYREF 2025, themed "Empowering Sustainable Youth Through Sustainable Innovation." My essay, titled "Harnessing Blockchain and AI: Efficient and Decentralized Carbon Trading Technology as an Effort to Realize Green Finance," explores the integration of blockchain and AI to build a transparent, efficient, and decentralized carbon trading system in support of a sustainable green economy.',
+      tags: ['Essay Writing', 'Research', 'Energy', 'Innovation'],
+      cert: 'images/cert-top50.jpg'
+    }
+  ];
+
+  function openAchModal(idx) {
+    const d = achData[idx];
+    document.getElementById('modal-medal').textContent = d.medal;
+    document.getElementById('modal-title').textContent = d.title;
+    document.getElementById('modal-year').textContent = d.year;
+    document.getElementById('modal-project-name').textContent = d.project;
+    document.getElementById('modal-project-sub').textContent = d.projectSub;
+    document.getElementById('modal-desc').textContent = d.desc;
+    const tagsEl = document.getElementById('modal-tags');
+    tagsEl.innerHTML = d.tags.map(t => '<span class="ach-modal-tag">' + t + '</span>').join('');
+    const certSection = document.getElementById('modal-cert-section');
+    const certEl = document.getElementById('modal-cert');
+    if (d.showCert === false) {
+      certSection.style.display = 'none';
+    } else {
+      certSection.style.display = 'block';
+      if (d.cert) {
+        certEl.innerHTML = '<img src="' + d.cert + '" alt="Certificate" loading="lazy">';
+      } else {
+        certEl.innerHTML = '<div class="ach-modal-cert-placeholder"><span>📄</span>// certificate belum diupload<br><span style="color:var(--muted);font-size:0.68rem">Replace <span style="color:var(--accent)">cert: null</span> di achData[' + idx + '] with your image path</span></div>';
+      }
+    }
+    document.getElementById('ach-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeAchModal() {
+    document.getElementById('ach-modal').classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeAchModal();
+  });
+</script>
+
+<!-- CERTIFICATE MODAL -->
+<div id="cert-modal" onclick="if(event.target===this)closeCertModal()" style="display:none;position:fixed;inset:0;z-index:99985;background:rgba(0,0,0,0.88);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:1.5rem;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;max-width:680px;width:100%;max-height:90vh;overflow-y:auto;animation:modalIn 0.35s cubic-bezier(.4,0,.2,1);position:relative;">
+    <div style="padding:1.5rem 2rem 1.2rem;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:2;border-radius:16px 16px 0 0;">
+      <div style="font-family:var(--mono);font-size:0.68rem;color:var(--accent);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:0.4rem">// certificate</div>
+      <div id="cert-modal-name" style="font-weight:800;font-size:1rem;line-height:1.4;margin-bottom:0.3rem;"></div>
+      <div id="cert-modal-year" style="font-family:var(--mono);font-size:0.72rem;color:var(--accent2);"></div>
+      <button onclick="closeCertModal()" style="position:absolute;top:1.2rem;right:1.2rem;background:var(--surface2);border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:8px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:var(--mono);" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">✕</button>
+    </div>
+    <div style="padding:1.5rem 2rem 2rem;">
+      <div id="cert-modal-img-wrap" style="border-radius:10px;overflow:hidden;border:1px solid var(--border);background:var(--surface2);min-height:200px;display:flex;align-items:center;justify-content:center;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const certData = [
+    {
+      name: 'Blockchain Basics Course – Cyfrin Updraft',
+      year: '2026',
+      img: 'images/cert-blockchain-basics.jpg'  // ganti dengan: 'images/cert-blockchain-basics.jpg'
+    },
+    {
+      name: 'Chainlink Fundamentals – Cyfrin Updraft x Chainlink',
+      year: '2026',
+      img: 'images/cert-chainlink.jpg'  // ganti dengan: 'images/cert-chainlink.jpg'
+    },
+    {
+      name: 'Cyber Security Course Level Advanced – ITBOX',
+      year: '2025',
+      img: 'images/cert-cybersec.jpg'  // ganti dengan: 'images/cert-cybersec.jpg'
+    }
+  ];
+
+  function openCertModal(idx) {
+    const d = certData[idx];
+    document.getElementById('cert-modal-name').textContent = d.name;
+    document.getElementById('cert-modal-year').textContent = d.year;
+    const wrap = document.getElementById('cert-modal-img-wrap');
+    if (d.img) {
+      wrap.innerHTML = '<img src="' + d.img + '" alt="' + d.name + '" style="width:100%;height:auto;display:block;border-radius:10px;" loading="lazy">';
+    } else {
+      wrap.innerHTML = '<div style="font-family:var(--mono);font-size:0.75rem;color:var(--muted);text-align:center;padding:2.5rem;line-height:2.2"><span style="font-size:2rem;display:block;margin-bottom:0.5rem">📄</span>// certificate belum diupload<br><span style="color:var(--accent);font-size:0.68rem">Replace <b>img: null</b> di certData[' + idx + '] with your certificate image path</span></div>';
+    }
+    const modal = document.getElementById('cert-modal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCertModal() {
+    document.getElementById('cert-modal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { closeCertModal(); closeAchModal(); }
+  });
+</script>
+
 </body>
 </html>
