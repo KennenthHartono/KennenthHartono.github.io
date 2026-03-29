@@ -283,6 +283,12 @@
     .social-btn:hover::after { opacity: 1; }
     @media (max-width: 768px) {
       .floating-social { display: none; }
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 2rem 1.2rem;
+        min-height: auto;
+      }
       .hero-photo { order: -1; }
       .photo-wrapper, .photo-circle { width: 220px; height: 220px; }
       .stats-row { justify-content: center; }
@@ -318,8 +324,8 @@
 
 <!-- FLOATING SOCIAL -->
 <div class="floating-social">
-  <a class="social-btn" href="mailto:kennenthhartono@gmail.com" data-tip="Gmail">📧</a>
-  <a class="social-btn" href="mailto:Kennenth@protonmail.com" data-tip="ProtonMail">🔒</a>
+  <a class="social-btn" href="/cdn-cgi/l/email-protection#e388868d8d868d978b8b8291978c8d8ca3848e828a8fcd808c8e" data-tip="Gmail">📧</a>
+  <a class="social-btn" href="/cdn-cgi/l/email-protection#7239171c1c171c061a3202001d061d1c1f131b1e5c111d1f" data-tip="ProtonMail">🔒</a>
   <a class="social-btn" href="https://linkedin.com/in/kennenthhartono" target="_blank" data-tip="LinkedIn">💼</a>
   <a class="social-btn" href="https://github.com/KennenthHartono" target="_blank" data-tip="GitHub">🐱</a>
 </div>
@@ -345,7 +351,7 @@
     <p class="hero-desc">// Robotics. Blockchain. Cyber Security. Web3 Bug Hunting.<br>// Securing decentralized systems &amp; building at the intersection of hardware and Web3.</p>
     <div class="btn-group">
       <a class="btn btn-primary" href="#experience">See My Experience</a>
-      <a class="btn btn-secondary" href="mailto:kennenthhartono@gmail.com">Contact Me</a>
+      <a class="btn btn-secondary" href="/cdn-cgi/l/email-protection#ff949a91919a918b97979e8d8b909190bf98929e9693d19c9092">Contact Me</a>
     </div>
     <div class="stats-row">
       <div class="stat-item"><div class="stat-num" data-target="9">0</div><div class="stat-label">org. roles</div></div>
@@ -565,8 +571,8 @@
     <div>
       <p class="contact-text">Punya project menarik di bidang robotics, blockchain, atau AI? Mari diskusi! Terbuka untuk kolaborasi, freelance, atau full-time opportunity.</p>
       <div class="contact-links">
-        <a class="contact-link" href="mailto:kennenthhartono@gmail.com"><div class="icon">📧</div> kennenthhartono@gmail.com</a>
-        <a class="contact-link" href="mailto:Kennenth@protonmail.com"><div class="icon">🔒</div> Kennenth@protonmail.com</a>
+        <a class="contact-link" href="mailto:kennenth@kennenth.dev"><div class="icon">📧</div> kennenth@kennenth.dev</a>
+        <a class="contact-link" href="mailto:kennenth@proton.me"><div class="icon">🔒</div> kennenth@proton.me</a>
         <a class="contact-link" href="https://linkedin.com/in/kennenthhartono" target="_blank"><div class="icon">💼</div> linkedin.com/in/kennenthhartono</a>
         <a class="contact-link" href="tel:+6281215064335"><div class="icon">📱</div> (+62) 812-1506-4335</a>
       </div>
@@ -788,18 +794,21 @@
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ name, email, message })
       });
-      if (res.ok) {
+      const data = await res.json();
+      if (data.ok) {
         successEl.style.display = 'block';
         document.getElementById('cf-name').value = '';
         document.getElementById('cf-email').value = '';
         document.getElementById('cf-message').value = '';
-        btn.textContent = '✓ Terkirim!';
-      } else { throw new Error('Failed'); }
-    } catch {
-      errEl.textContent = '✗ Gagal mengirim pesan. Coba lagi.';
+      } else {
+        errEl.textContent = '✗ Gagal mengirim. Coba lagi.';
+        errEl.style.display = 'block';
+      }
+    } catch(e) {
+      errEl.textContent = '✗ Terjadi kesalahan. Coba lagi.';
       errEl.style.display = 'block';
-      btn.textContent = 'Kirim Pesan →'; btn.disabled = false;
     }
+    btn.textContent = 'Kirim Pesan →'; btn.disabled = false;
   }
 </script>
 </body>
