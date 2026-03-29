@@ -228,7 +228,7 @@
     <p class="hero-desc">// Robotics. Blockchain. Cyber Security. Web3 Bug Hunting.<br>// Securing decentralized systems &amp; building at the intersection of hardware and Web3.</p>
     <div class="btn-group">
       <a class="btn btn-primary" href="#experience">See My Experience</a>
-      <a class="btn btn-secondary" href="mailto:kennenthhartono@gmail.com">Contact Me</a>
+      <a class="btn btn-secondary" href="/cdn-cgi/l/email-protection#5239373c3c373c263a3a3320263d3c3d12353f333b3e7c313d3f">Contact Me</a>
     </div>
     <div class="stats-row">
       <div class="stat-item"><div class="stat-num" data-target="9">0</div><div class="stat-label">org. roles</div></div>
@@ -455,11 +455,12 @@
       </div>
     </div>
     <div class="contact-form">
-      <input class="cf-input" type="text" placeholder="Nama kamu" />
-      <input class="cf-input" type="email" placeholder="Email" />
-      <textarea class="cf-input cf-textarea" placeholder="Pesan..."></textarea>
-      <button class="btn btn-primary" style="align-self:flex-start;border:none;cursor:pointer" onclick="handleSend()">Kirim Pesan →</button>
-      <div class="send-success" id="sendMsg">✓ Pesan terkirim! Hubungkan Formspree untuk mengaktifkan fitur ini.</div>
+      <input class="cf-input" id="cf-name" type="text" placeholder="Nama kamu" />
+      <input class="cf-input" id="cf-email" type="email" placeholder="Email" />
+      <textarea class="cf-input cf-textarea" id="cf-message" placeholder="Pesan..."></textarea>
+      <button class="btn btn-primary" id="cf-btn" style="align-self:flex-start;border:none;cursor:pointer" onclick="handleSend()">Kirim Pesan →</button>
+      <div class="send-success" id="sendMsg" style="display:none">✓ Pesan terkirim! Terima kasih, akan segera dibalas.</div>
+      <div id="sendErr" style="display:none;font-family:var(--mono);font-size:0.78rem;color:#ff5f57;margin-top:0.3rem"></div>
     </div>
   </div>
 </section>
@@ -469,7 +470,7 @@
   <div class="footer-text">kennenth<span class="footer-accent">.dev</span></div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // CURSOR GLOW
   const glow = document.getElementById('cursorGlow');
   document.addEventListener('mousemove', e => {
@@ -538,8 +539,49 @@
     document.getElementById('tab-' + tab).classList.add('active');
   }
 
-  // SEND MESSAGE
-  function handleSend() {
-    document.getElementById('sendMsg').style.display = 'block';
+  // SEND MESSAGE via Formspree
+  async function handleSend() {
+    const name = document.getElementById('cf-name').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const message = document.getElementById('cf-message').value.trim();
+    const btn = document.getElementById('cf-btn');
+    const successEl = document.getElementById('sendMsg');
+    const errEl = document.getElementById('sendErr');
+
+    successEl.style.display = 'none';
+    errEl.style.display = 'none';
+
+    if (!name || !email || !message) {
+      errEl.textContent = '✗ Mohon isi semua kolom.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.textContent = 'Mengirim...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('https://formspree.io/f/mojpedbz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ name, email, message })
+      });
+      if (res.ok) {
+        successEl.style.display = 'block';
+        document.getElementById('cf-name').value = '';
+        document.getElementById('cf-email').value = '';
+        document.getElementById('cf-message').value = '';
+        btn.textContent = '✓ Terkirim!';
+      } else {
+        throw new Error('Failed');
+      }
+    } catch {
+      errEl.textContent = '✗ Gagal mengirim pesan. Coba lagi.';
+      errEl.style.display = 'block';
+      btn.textContent = 'Kirim Pesan →';
+      btn.disabled = false;
+    }
   }
 </script>
+</body>
+</html>
